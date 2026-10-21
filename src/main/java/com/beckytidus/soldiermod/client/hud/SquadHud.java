@@ -40,7 +40,7 @@ public final class SquadHud {
         }
         width += 10;
         int x0 = 4;
-        int y0 = 6;
+        int y0 = 44;
 
         graphics.fill(x0, y0 - 2, x0 + width, y0 + 4 + shown * 10, 0x90101810);
         graphics.text(minecraft.font, Component.literal("\u2694 SQUAD  " + squad.size()).withColor(0xFFD766),
@@ -54,9 +54,7 @@ public final class SquadHud {
     }
 
     private static String rosterLine(SoldierEntity s) {
-        String chevrons = s.getRank().chevrons();
-        String name = s.getSoldierName() + (chevrons.isEmpty() ? "" : " " + chevrons);
-        return name + "  " + s.getSoldierClass().label() + "  -  " + s.getOrder().label();
+        return s.getNameWithChevrons() + "  " + s.getSoldierClass().label() + "  -  " + s.getOrder().label();
     }
 
     private static void targetCard(GuiGraphicsExtractor graphics, Minecraft minecraft) {
@@ -65,9 +63,9 @@ public final class SquadHud {
 
         int w = minecraft.getWindow().getGuiScaledWidth();
         int y = 6;
-        Component title = Component.literal(soldier.getTagName()).withColor(0xFFD766);
-        String line = soldier.getOrder().label() + "   Kills " + soldier.getKills()
-                + "   " + (int) soldier.getHealth() + "/" + (int) soldier.getMaxHealth() + " HP";
+        Component title = Component.literal(soldier.getNameWithChevrons()).withColor(0xFFD766);
+        String line = soldier.getSoldierClass().label() + "  -  " + soldier.getOrder().label()
+                + "   Kills " + soldier.getKills() + "   " + (int) soldier.getHealth() + "/" + (int) soldier.getMaxHealth() + " HP";
         String hint = soldier.isOwnedBy(minecraft.player)
                 ? "Sneak + right-click: next order"
                 : "Not yours to command";

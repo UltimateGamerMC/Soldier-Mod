@@ -67,6 +67,7 @@ public class SoldierEntity extends PathfinderMob {
     private static final EntityDataAccessor<String> ORDER = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> SOLDIER_CLASS = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> RANK = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> SOLDIER_NAME = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> FORMATION = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> TEXTURE_VARIANT = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> SQUAD_INDEX = SynchedEntityData.defineId(SoldierEntity.class, EntityDataSerializers.INT);
@@ -96,6 +97,7 @@ public class SoldierEntity extends PathfinderMob {
     private long lastSpeakTick = 0;
     private long lastHurtTick = -1000;
     private boolean engaged = false;
+    private String lastTagName = "";
 
     public SoldierEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
@@ -128,6 +130,7 @@ public class SoldierEntity extends PathfinderMob {
         builder.define(ORDER, Order.FOLLOW.name());
         builder.define(SOLDIER_CLASS, SoldierClass.RIFLEMAN.name());
         builder.define(RANK, Rank.PRIVATE.name());
+        builder.define(SOLDIER_NAME, "");
         builder.define(FORMATION, Formation.WEDGE.name());
         builder.define(TEXTURE_VARIANT, "1");
         builder.define(SQUAD_INDEX, 0);
@@ -182,6 +185,7 @@ public class SoldierEntity extends PathfinderMob {
         entityData.set(ORDER, order.name());
         entityData.set(SOLDIER_CLASS, soldierClass.name());
         entityData.set(RANK, rank.name());
+        entityData.set(SOLDIER_NAME, soldierName);
         entityData.set(FORMATION, formation.name());
         entityData.set(TEXTURE_VARIANT, textureVariant);
         entityData.set(SQUAD_INDEX, squadIndex);
@@ -228,7 +232,7 @@ public class SoldierEntity extends PathfinderMob {
         this.order = next;
         this.patrolTarget = null;
         this.repathCooldown = 0;
-        if (next.isAnchored() && post == null) this.post = blockPosition();
+        if (next.isAnchored()) this.post = blockPosition();
         if (next == Order.REGROUP || next == Order.RETREAT) this.setTarget(null);
         if (!level().isClientSide()) {
             entityData.set(ORDER, next.name());
@@ -300,14 +304,22 @@ public class SoldierEntity extends PathfinderMob {
 
     public String getSoldierName() {
         if (level().isClientSide()) {
-            return getCustomName() != null ? getCustomName().getString() : "Soldier";
+            String synced = entityData.get(SOLDIER_NAME);
+            return synced != null && !synced.isEmpty() ? synced : "Soldier";
         }
         return soldierName != null && !soldierName.isEmpty() ? soldierName : "Soldier";
     }
 
     public void setSoldierName(String name) {
         this.soldierName = name != null ? name : "";
+        if (!level().isClientSide()) entityData.set(SOLDIER_NAME, this.soldierName);
         updateNameTag();
+    }
+
+    /** Callsign with rank chevrons, no class - for the HUD and the name tag. */
+    public String getNameWithChevrons() {
+        String chevrons = getRank().chevrons();
+        return chevrons.isEmpty() ? getSoldierName() : getSoldierName() + " " + chevrons;
     }
 
     public String getTextureVariant() {
@@ -756,7 +768,10 @@ public class SoldierEntity extends PathfinderMob {
     }
 
     private void updateNameTag() {
-        this.setCustomName(Component.literal(getTagName()));
+        String tag = getTagName();
+        if (tag.equals(lastTagName)) return;
+        lastTagName = tag;
+        this.setCustomName(Component.literal(tag));
     }
 
     private long now() {
