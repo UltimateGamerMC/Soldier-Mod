@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "soldier-mod",
+	"version": "${version}",
+	"name": "Soldier Mod",
+	"description": "Build a squad of soldiers who fight for you. Enlist them, promote them by rank, kit them out as riflemen, medics, heavies or scouts, and command the whole unit with orders, formations and a radio.",
+	"authors": [
+		"Becky Tidus"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/soldier-mod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.beckytidus.soldiermod.SoldierMod"
+		],
+		"client": [
+			"com.beckytidus.soldiermod.SoldierModClient"
+		]
+	},
+	"mixins": [
+		"soldier-mod.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.0",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

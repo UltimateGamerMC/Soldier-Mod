@@ -1,0 +1,1 @@
+{"required":true,"package":"com.beckytidus.soldiermod.mixin","compatibilityLevel":"JAVA_25","mixins":[],"client":["EntityRenderDispatcherSoldierMixin"],"injectors":{"defaultRequire":1},"overwrites":{"requireAnnotations":true}}

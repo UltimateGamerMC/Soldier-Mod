@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone",
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    " I ",
+    "ICI",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "soldier-mod:squad_radio"
+  }
+}

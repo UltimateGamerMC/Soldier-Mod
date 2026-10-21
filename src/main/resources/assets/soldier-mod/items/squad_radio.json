@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "soldier-mod:item/squad_radio"
+  }
+}
